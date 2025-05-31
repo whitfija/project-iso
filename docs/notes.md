@@ -4,3 +4,8 @@
 canva board - https://www.canva.com/design/DAGieOjW10A/fIb80hac8ee-bve2ObbeGw
 
 ## resources
+
+
+## assets loaded/used
+- 3DCamera for Fighing Game by GatitoMimoso - Godot AssetLib
+- Blender-Godot Pipelin by michaeljared - Godot AssetLib
