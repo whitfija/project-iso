@@ -2,7 +2,13 @@ extends CharacterBody3D
 @onready var animation_player: AnimationPlayer = $visuals/mixamo_base/AnimationPlayer
 @onready var camera_mount: Node3D = $camera_mount
 @onready var visuals: Node3D = $visuals
+@onready var hand_mount: Node3D = $visuals/mixamo_base/Armature/Skeleton3D/BoneAttachment3D/right_hand_mount
+@onready var ball_pickup_area: Area3D = $ball_pickup_area 
+@onready var pickup_cooldown_timer: Timer = $pickup_cooldown
+@onready var world: Node3D = $".."
 
+var held_ball: RigidBody3D = null
+var can_pickup = true
 
 var SPEED = 2.8
 const JUMP_VELOCITY = 4.5
@@ -25,6 +31,16 @@ func _input(event: InputEvent) -> void:
 		visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
 		camera_mount.rotate_x(deg_to_rad(-event.relative.y * sens_vertical))
 
+	if event.is_action_pressed("pickup_drop"):
+		if held_ball != null:
+			drop_ball() # If we have a ball, drop it
+		else:
+			can_pickup = true # If we don't have a ball, enable pickup
+			
+	if event.is_action_pressed("throw"):
+		if held_ball != null:
+			throw_ball()
+			
 func _physics_process(delta: float) -> void:
 	# unlock when animation done
 	if !animation_player.is_playing():
@@ -78,3 +94,79 @@ func _physics_process(delta: float) -> void:
 
 	if (!is_locked):
 		move_and_slide()
+
+func drop_ball():
+	if held_ball != null:
+		# Disable the pickup area's monitoring and start the cooldown timer
+		ball_pickup_area.monitoring = false
+		pickup_cooldown_timer.start()
+		
+		# Reparent the ball to the main scene
+		hand_mount.remove_child(held_ball)
+		world.add_child(held_ball)
+		
+		# Position the ball at the hand's current global position
+		held_ball.global_transform.origin = hand_mount.global_transform.origin
+		
+		# Enable physics simulation
+		held_ball.freeze = false
+		
+		# Clear the held_ball variable
+		held_ball = null
+		
+
+func throw_ball():
+	if held_ball != null:
+		# Disable the pickup area's monitoring and start the cooldown timer
+		ball_pickup_area.monitoring = false
+		pickup_cooldown_timer.start()
+		
+		# Reparent the ball to the main scene
+		hand_mount.remove_child(held_ball)
+		world.add_child(held_ball)
+		
+		# Position the ball at the hand's current global position
+		held_ball.global_transform.origin = hand_mount.global_transform.origin
+		
+		# Enable physics simulation
+		held_ball.freeze = false
+		
+		# Get the camera's forward direction
+		var throw_direction = -camera_mount.global_transform.basis.z.normalized()
+		
+		# Apply an impulse to the ball
+		var throw_speed = 10.0
+		held_ball.apply_central_impulse(throw_direction * throw_speed)
+		
+		# Clear the held_ball variable
+		held_ball = null
+
+func _on_ball_pickup_area_body_entered(body: Node3D) -> void:
+	# Exit if the player is already holding a ball
+	if held_ball != null:
+		return
+	
+	print(body.get_name())
+	
+	# Check if the body that entered the area is the basketball
+	if body.is_in_group("basketballs") and Input.is_action_pressed("pickup_drop"):
+		# Store a reference to the ball
+		held_ball = body as RigidBody3D
+		
+		# Reparent the ball to the hand mount
+		var original_parent = held_ball.get_parent()
+		original_parent.remove_child(held_ball)
+		hand_mount.add_child(held_ball)
+		
+		# Reset its local position and rotation relative to the hand mount
+		held_ball.position = Vector3(2.361, 4.048, 12.794)
+		held_ball.rotation = Vector3.ZERO
+		held_ball.scale = hand_mount.global_transform.basis.get_scale().inverse()
+		
+		# Disable the ball's physics so it stays with the hand
+		held_ball.freeze = true
+		can_pickup = false
+
+
+func _on_pickup_cooldown_timeout() -> void:
+	ball_pickup_area.monitoring = true

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpp5actaer3v5"]
+
+[ext_resource type="PackedScene" uid="uid://byq6mxlwy8w2h" path="res://assets/models/hooper_rigged_weighted.glb" id="1_556gr"]
+
+[node name="hooper_rigged_weighted" instance=ExtResource("1_556gr")]
