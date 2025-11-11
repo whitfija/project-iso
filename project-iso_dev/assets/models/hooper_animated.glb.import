@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://byq6mxlwy8w2h"
-path="res://.godot/imported/hooper_rigged_weighted.glb-877c7cf824086f9cdbd51ba49d5973bc.scn"
+uid="uid://c3be0ufi8of6u"
+path="res://.godot/imported/hooper_animated.glb-a2ccdc25a32d2f886e9ad349d0032626.scn"
 
 [deps]
 
-source_file="res://assets/models/hooper_rigged_weighted.glb"
-dest_files=["res://.godot/imported/hooper_rigged_weighted.glb-877c7cf824086f9cdbd51ba49d5973bc.scn"]
+source_file="res://assets/models/hooper_animated.glb"
+dest_files=["res://.godot/imported/hooper_animated.glb-a2ccdc25a32d2f886e9ad349d0032626.scn"]
 
 [params]
 
