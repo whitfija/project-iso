@@ -9,6 +9,8 @@ extends CharacterBody3D
 @onready var world: Node3D = $".."
 @onready var anim_tree = $visuals/AnimationPlayer/AnimationTree
 
+# hello world
+
 var held_ball: RigidBody3D = null
 var can_pickup = true
 
